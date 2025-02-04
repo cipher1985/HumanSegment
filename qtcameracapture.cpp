@@ -1,10 +1,8 @@
 ﻿#include "qtcameracapture.h"
 
-//#include <QCamera>
 #include <QCameraInfo>
 #include <QCameraImageCapture>
 #include <QVideoSurfaceFormat>
-//#include <QDebug>
 
 QList<QtCameraCapture::Info> QtCameraCapture::infoList(bool getResolutions)
 {
