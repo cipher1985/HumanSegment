@@ -1,10 +1,10 @@
 ﻿/********************************************************
 *
 * 文件名：     qtcamera.h
-* 版权：       ChinaEdu Co. Ltd. Copyright 2024 All Rights Reserved.
+* 版权：       lonbuler Co. Ltd. Copyright 2024 All Rights Reserved.
 * 描述：       基于QT的摄像头采集类
 *
-* 修改人：     傅祯勇
+* 修改人：     lon
 * 修改内容：
 * 版本：       1.0
 * 修改时间：   2024-07-25
