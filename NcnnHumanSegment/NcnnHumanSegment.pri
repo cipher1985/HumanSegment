@@ -11,7 +11,9 @@ DEPENDPATH += $$NcnnFolder/include
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/qtncnnmodnet.h
+    $$PWD/qtncnnmodnet.h \
+    $$PWD/qtncnnpphumansegment.h
 
 SOURCES += \
-    $$PWD/qtncnnmodnet.cpp
+    $$PWD/qtncnnmodnet.cpp \
+    $$PWD/qtncnnpphumansegment.cpp

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QElapsedTimer>
+#include <QTemporaryDir>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -11,8 +12,12 @@ QT_END_NAMESPACE
 class QtCameraCapture;
 class QtOnnxRobustVideoMatting;
 class QtOnnxModNet;
+class QtOnnxPPHumanSegment;
 class QtNcnnModNet;
+class QtNcnnPPHumanSegment;
 class QLabel;
+class QTemporaryDir;
+
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -35,6 +40,7 @@ private slots:
     void on_pushButton_save_clicked();
 private:
     Ui::Widget *ui;
+    QTemporaryDir m_tempDir;
     QElapsedTimer m_timer;
     QAtomicInt m_modeIndex{0};
     QImage m_imgFG;
@@ -45,7 +51,9 @@ private:
     QtCameraCapture* m_cam{};
     QtOnnxRobustVideoMatting* m_onnxRvm{};
     QtOnnxModNet* m_onnxModNet{};
+    QtOnnxPPHumanSegment* m_onnxPPHumanSeg{};
     QtNcnnModNet* m_ncnnModNet{};
+    QtNcnnPPHumanSegment* m_ncnnPPHumanSeg{};
     int m_frameCount{0};
     std::atomic_bool m_reverseX{false};
     std::atomic_bool m_reverseY{false};

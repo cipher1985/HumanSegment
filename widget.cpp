@@ -8,10 +8,13 @@
 #include <QStackedLayout>
 #include <QStyledItemDelegate>
 
+
 #include "qtcameracapture.h"
 #include "qtncnnmodnet.h"
+#include "qtncnnpphumansegment.h"
 #include "qtonnxmodnet.h"
 #include "qtonnxrobustvideomatting.h"
+#include "qtonnxpphumansegment.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -22,9 +25,26 @@ Widget::Widget(QWidget *parent)
     ui->comboBox_cam_list->setItemDelegate(new QStyledItemDelegate);
     ui->comboBox_mode_list->setItemDelegate(new QStyledItemDelegate);
 
-    m_onnxRvm = new QtOnnxRobustVideoMatting(this);
-    m_onnxModNet = new QtOnnxModNet(this);
-    m_ncnnModNet = new QtNcnnModNet(this);
+    QString onnxRvm = m_tempDir.filePath("rvm.onnx");
+    QFile::copy("://OnnxHumanSegment/model/rvm/rvm_mobilenetv3_fp32.onnx", onnxRvm);
+    QString onnxPPHumanSeg = m_tempDir.filePath("ppHumanSeg.onnx");
+    QFile::copy("://OnnxHumanSegment/model/PP-HumanSeg/model_interp.onnx", onnxPPHumanSeg);
+    QString onnxModnet = m_tempDir.filePath("modnet.onnx");
+    QFile::copy("://OnnxHumanSegment/model/modnet/modnet_webcam_portrait_matting_256x256.onnx", onnxModnet);
+    QString ncnnModnetBin = m_tempDir.filePath("modnet.bin");
+    QString ncnnModnetParam = m_tempDir.filePath("modnet.param");
+    QFile::copy("://NcnnHumanSegment/model/modnet/modnet_webcam_portrait_matting_256x256.bin", ncnnModnetBin);
+    QFile::copy("://NcnnHumanSegment/model/modnet/modnet_webcam_portrait_matting_256x256.param", ncnnModnetParam);
+    QString ncnnPPHumanSegBin = m_tempDir.filePath("ppHumanSeg.bin");
+    QString ncnnPPHumanSegParam = m_tempDir.filePath("ppHumanSeg.param");
+    QFile::copy("://NcnnHumanSegment/model/PP-HumanSeg/simple_model_interp_192x192.bin", ncnnPPHumanSegBin);
+    QFile::copy("://NcnnHumanSegment/model/PP-HumanSeg/simple_model_interp_192x192.param", ncnnPPHumanSegParam);
+
+    m_onnxRvm = new QtOnnxRobustVideoMatting(this, onnxRvm);
+    m_onnxPPHumanSeg = new QtOnnxPPHumanSegment(this, onnxPPHumanSeg);
+    m_onnxModNet = new QtOnnxModNet(this, onnxModnet);
+    m_ncnnModNet = new QtNcnnModNet(this, ncnnModnetParam, ncnnModnetBin);
+    m_ncnnPPHumanSeg = new QtNcnnPPHumanSegment(this, ncnnPPHumanSegParam, ncnnPPHumanSegBin);
 
     m_cam = new QtCameraCapture(this);
 
@@ -77,8 +97,14 @@ void Widget::updateSegment()
     case 2://ONNX MODNet
         imgFG = m_onnxModNet->segmentImage(m_imgFG);
         break;
-    case 3://NCNN MODNet
+    case 3://ONNX PP-HumanSegment
+        imgFG = m_onnxPPHumanSeg->segmentImage(m_imgFG);
+        break;
+    case 4://NCNN MODNet
         imgFG = m_ncnnModNet->segmentImage(m_imgFG);
+        break;
+    case 5://NCNN PP-HumanSegment
+        imgFG = m_ncnnPPHumanSeg->segmentImage(m_imgFG);
         break;
     default:
         //ONNX RVM
@@ -118,7 +144,7 @@ void Widget::on_pushButton_capture_clicked()
 {
     int index = ui->comboBox_cam_list->currentIndex();
     if(!m_cam->open(index)) {
-        QMessageBox::information(this, u8"提示", u8"摄像头打开失败", u8"确定");
+        QMessageBox::information(this, u8"提示", u8"摄像头打开失败", QMessageBox::Ok);
         return;
     }
     m_imgFG = QImage();
@@ -200,10 +226,18 @@ void Widget::on_comboBox_mode_list_currentIndexChanged(int index)
 
 void Widget::on_pushButton_save_clicked()
 {
+#if QT_VERSION_MAJOR >= 6
+    QPixmap pixFg = m_labelFG->pixmap().copy();
+#else
     QPixmap pixFg = m_labelFG->pixmap()->copy();
+#endif
     if(pixFg.isNull())
         return;
+#if QT_VERSION_MAJOR >= 6
+    QPixmap pixBg = m_labelBG->pixmap().copy();
+#else
     QPixmap pixBg = m_labelBG->pixmap()->copy();
+#endif
     QPixmap pixmap(pixFg.width(), pixFg.height());
     pixmap.fill(m_bgColor);
     QPainter painter(&pixmap);
@@ -226,8 +260,8 @@ void Widget::on_pushButton_save_clicked()
         extFile != "png" && extFile != "jpeg")
         imgFile.append(".png");
     if(!pixmap.save(imgFile)) {
-        QMessageBox::information(this, u8"提示", u8"图片保存失败", u8"确定");
+        QMessageBox::information(this, u8"提示", u8"图片保存失败", QMessageBox::Ok);
         return;
     }
-    QMessageBox::information(this, u8"提示", u8"图片保存完成", u8"确定");
+    QMessageBox::information(this, u8"提示", u8"图片保存完成", QMessageBox::Ok);
 }

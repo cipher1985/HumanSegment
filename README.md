@@ -8,3 +8,4 @@
 * [ONNX Runtime](https://github.com/microsoft/onnxruntime) ([@microsoft](https://github.com/microsoft))  
 * [RobustVideoMatting(rvm)](https://github.com/PeterL1n/RobustVideoMatting) ([@PeterL1n](https://github.com/PeterL1n))  
 * [MODNet](https://github.com/ZHKKKe/MODNet) ([@ZHKKKe](https://github.com/ZHKKKe))  
+* [PaddleSeg](https://github.com/PaddlePaddle/PaddleSeg) (contrib/PP-HumanSeg)  

@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>OnnxHumanSegment/model/modnet/modnet_webcam_portrait_matting_256x256.onnx</file>
+        <file>NcnnHumanSegment/model/modnet/modnet_webcam_portrait_matting_256x256.bin</file>
+        <file>NcnnHumanSegment/model/modnet/modnet_webcam_portrait_matting_256x256.param</file>
+        <file>NcnnHumanSegment/model/PP-HumanSeg/simple_model_interp_192x192.bin</file>
+        <file>NcnnHumanSegment/model/PP-HumanSeg/simple_model_interp_192x192.param</file>
+        <file>OnnxHumanSegment/model/PP-HumanSeg/model_interp.onnx</file>
+        <file>OnnxHumanSegment/model/rvm/rvm_mobilenetv3_fp32.onnx</file>
+    </qresource>
+</RCC>
